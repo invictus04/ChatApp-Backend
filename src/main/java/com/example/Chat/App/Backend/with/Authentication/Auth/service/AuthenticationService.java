@@ -64,6 +64,7 @@ public class AuthenticationService {
 
 
     public void verifyUser(VerifyUserDto userDto) {
+        System.out.println(userDto);
         Optional<Users> optionalUser = userRepository.findByEmail(userDto.getEmail());
         System.out.println(optionalUser.isPresent());
         if (optionalUser.isPresent()) {

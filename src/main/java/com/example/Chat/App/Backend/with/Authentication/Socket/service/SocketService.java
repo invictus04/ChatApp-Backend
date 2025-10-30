@@ -18,14 +18,16 @@ import java.time.format.DateTimeFormatter;
 public class SocketService {
     private final MessageService messageService;
 
-    public void sendSocketMessage(SocketIOClient senderClient, Message message, String room, String eventName) {
+    public void sendSocketMessage(SocketIOClient senderClient, Message message, String  room, String eventName) {
         try {
             MessageDto DTO = toDTO(message);
-            for (SocketIOClient client : senderClient.getNamespace().getRoomOperations(room).getClients()) {
-                if (!client.getSessionId().equals(senderClient.getSessionId())) {
-                    client.sendEvent(eventName, DTO);
-                }
-            }
+//            for (SocketIOClient client : senderClient.getNamespace().getRoomOperations(room).getClients()) {
+//                if (!client.getSessionId().equals(senderClient.getSessionId())) {
+//                    client.sendEvent(eventName, DTO);
+//                }
+//            }
+
+            senderClient.getNamespace().getRoomOperations(room).sendEvent(eventName, DTO);
 
         } catch (Exception e) {
             log.error("Error serializing message", e);

@@ -1,5 +1,6 @@
 package com.example.Chat.App.Backend.with.Authentication.Auth.config;
 
+import com.example.Chat.App.Backend.with.Authentication.Auth.entity.Users;
 import com.example.Chat.App.Backend.with.Authentication.Auth.service.JWTService;
 
 import jakarta.servlet.FilterChain;
@@ -50,16 +51,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String jwt = authHeader.substring(7);
             System.out.println(jwt);
-            final String userName = jwtService.extractUserEmail(jwt);
-            System.out.println(userName);
+            final String userEmail = jwtService.extractUserEmail(jwt);
+            System.out.println(userEmail);
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            System.out.println(authentication);
+            System.out.println("This is authentication in jwtfilter class "+ authentication);
 
-            if (userName != null && authentication == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-                System.out.println(userDetails);
-                System.out.println(jwtService.isTokenValid(jwt, userDetails));
+            if (userEmail != null && authentication == null) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+                System.out.println("--- JWT FILTER DEBUG ---");
+                String emailFromToken = jwtService.extractUserEmail(jwt);
+                String emailFromDatabase = ((Users) userDetails).getEmail();
+                System.out.println("Email from Token:   '" + emailFromToken + "'");
+                System.out.println("Email from Database: '" + emailFromDatabase + "'");
+                System.out.println("Emails are equal? " + emailFromToken.equals(emailFromDatabase));
+                System.out.println("Token is valid?   " + jwtService.isTokenValid(jwt, userDetails));
+                System.out.println("--- END DEBUG ---");
 
                 if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

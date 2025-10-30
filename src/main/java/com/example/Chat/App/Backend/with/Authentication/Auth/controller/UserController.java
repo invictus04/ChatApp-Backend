@@ -33,22 +33,53 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> authenticateUser() {
-        System.out.println("This method inside controller");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        System.out.println("--- INSIDE /me CONTROLLER: START ---");
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+            System.out.println("--- 1. Got Authentication object.");
+
+            if (authentication == null) {
+                System.out.println("--- 2. Authentication object is NULL.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Auth is null");
+            }
+
+            System.out.println("--- 2. Authentication object is NOT null.");
+            System.out.println("--- 3. Is Authenticated? " + authentication.isAuthenticated());
+
+            if (!authentication.isAuthenticated()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Not authenticated");
+            }
+
+            Object principal = authentication.getPrincipal();
+            System.out.println("--- 4. Got Principal object.");
+
+            if (principal == null) {
+                System.out.println("--- 5. Principal object is NULL.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized: Principal is null");
+            }
+
+            System.out.println("--- 5. Principal object class: " + principal.getClass().getName());
+
+            if (principal instanceof Users) {
+                Users users = (Users) principal;
+                System.out.println("--- 6. Principal is instance of Users: " + users.getUsername());
+                return ResponseEntity.ok(
+                        Map.of(
+                                "username", users.getUsername(),
+                                "roles", users.getAuthorities()
+                        )
+                );
+            }
+
+            System.out.println("--- 6. FAILED 'instanceof' CHECK.");
+            return ResponseEntity.badRequest().body("Unexpected principal type: " + principal.getClass().getName());
+
+        } catch (Exception e) {
+            System.out.println("!!! CRITICAL EXCEPTION in /me controller: " + e.getMessage());
+            e.printStackTrace(); // This will print the full error
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error in controller: " + e.getMessage());
         }
-        Object principal = authentication.getPrincipal();
-        System.out.println(principal);
-        if (principal instanceof Users users) {
-            return ResponseEntity.ok(
-                    Map.of(
-                            "username", users.getUsername(),
-                            "roles", users.getAuthorities()
-                    )
-            );
-        }
-        return ResponseEntity.badRequest().body("Unexpected principal type");
     }
 
     @GetMapping("/")

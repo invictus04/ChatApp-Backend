@@ -22,4 +22,6 @@ public class MessageController {
     public ResponseEntity<List<Message>> getMesssage(@PathVariable String room) {
         return ResponseEntity.ok(messageService.getMessage(room));
     }
+
+
 }

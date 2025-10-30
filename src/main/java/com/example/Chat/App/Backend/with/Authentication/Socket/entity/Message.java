@@ -25,6 +25,7 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
 
+    @Column(name = "room_id")
     private String room;
 
     private String username;

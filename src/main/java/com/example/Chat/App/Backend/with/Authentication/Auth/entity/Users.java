@@ -1,5 +1,7 @@
 package com.example.Chat.App.Backend.with.Authentication.Auth.entity;
 
+import com.example.Chat.App.Backend.with.Authentication.Socket.entity.ChatRoom;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -38,6 +42,10 @@ public class Users implements UserDetails {
 
     @Column(name = "verification_expiration")
     private LocalDateTime verificationCodeExpiresAt;
+
+    @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Set<ChatRoom> chatRooms = new HashSet<>();
 
 
     public Users(String username, String email, String password) {
