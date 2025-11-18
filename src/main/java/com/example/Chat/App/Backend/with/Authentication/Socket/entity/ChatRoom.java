@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chat_rooms")
-@Data
 @Getter
 @Setter
 @AllArgsConstructor

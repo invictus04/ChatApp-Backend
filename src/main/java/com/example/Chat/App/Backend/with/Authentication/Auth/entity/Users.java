@@ -3,9 +3,7 @@ package com.example.Chat.App.Backend.with.Authentication.Auth.entity;
 import com.example.Chat.App.Backend.with.Authentication.Socket.entity.ChatRoom;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,7 +17,8 @@ import java.util.Set;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Users implements UserDetails {
 
     @Id
