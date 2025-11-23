@@ -42,4 +42,14 @@ public class RoomController {
         List<ChatRoom> rooms = roomService.findRoomsForUser(currentUser.getUsername());
         return ResponseEntity.ok(rooms);
     }
+
+    @PostMapping("/dm/{recipientUsername}")
+    public ResponseEntity<ChatRoom> initiateDM(@PathVariable String receiverUsername, @AuthenticationPrincipal Users currentUser){
+        if(currentUser.getUsername().equals(receiverUsername)){
+            return ResponseEntity.badRequest().build();
+        }
+
+        ChatRoom room = roomService.createOrGetPrivateRoom(currentUser.getUsername(), receiverUsername);
+        return ResponseEntity.ok(room);
+    }
 }

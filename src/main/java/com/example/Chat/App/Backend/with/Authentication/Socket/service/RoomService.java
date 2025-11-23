@@ -64,6 +64,32 @@ public class RoomService {
         return roomRepository.existsByIdAndParticipants_Username(roomId,username);
     }
 
+    public ChatRoom createOrGetPrivateRoom(String senderUsername, String recipientUsername) {
+        Users sender = userRepository.findByUsername(senderUsername).orElseThrow(() -> new RuntimeException("Sender not found"));
+        Users receiver = userRepository.findByUsername(recipientUsername).orElseThrow(() -> new RuntimeException("Receiver not found"));
+
+        List<ChatRoom> senderRooms = roomRepository.findByParticipants_Username(senderUsername);
+
+        for(ChatRoom room: senderRooms) {
+            if(room.isPrivate()) {
+                boolean isReceiverInRoom = room.getParticipants().stream().anyMatch(u->u.getUsername().equals(recipientUsername));
+                if(isReceiverInRoom) {
+                    return room;
+                }
+            }
+        }
+
+        ChatRoom newRoom = new ChatRoom();
+        newRoom.setName(recipientUsername + "DM");
+        newRoom.setPrivate(true);
+
+        newRoom.getParticipants().add(sender);
+        newRoom.getParticipants().add(receiver);
+
+        return  newRoom;
+
+    }
+
 
 
 }

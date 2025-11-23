@@ -22,6 +22,8 @@ public class ChatRoom {
 
     private String name;
 
+    private boolean isPrivate = false;
+
     @ManyToMany
     @JoinTable(name = "room_participants" , joinColumns = @JoinColumn(name = "room_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<Users> participants = new HashSet<>();
